@@ -19,6 +19,21 @@ public class NginxProxyCommand : Command<NginxProxyCommand.Settings>
         var db = new core.Database(settings.SqliteBb);
         db.Initialize();
 
+        string servicename = settings.ServiceName;
+        if (string.IsNullOrEmpty(servicename))
+        {
+            Console.WriteLine("Service name is required.");
+            return 1;
+        }
+        else
+        {
+            Console.WriteLine($"Service name is: {servicename}");
+        }
+
+
+        var api = new core.NginxProxyManagerApi("http://dockernuc:81/api");
+
+
 
         Console.WriteLine($"Nginx Proxy Command Executed  {settings.SqliteBb}");
         // Your command logic here
@@ -30,6 +45,12 @@ public class NginxProxyCommand : Command<NginxProxyCommand.Settings>
         [Description("The SQLite database file to use.")]
         [CommandArgument(0, "[sqlitedb]")]
         public required string SqliteBb { get; set; }
+
+        [CommandOption("--service|-s")]
+        public required string ServiceName { get; set; }
+
+
+
     }
 
 }

@@ -36,6 +36,11 @@ public class Database
         );
         ";
         command.ExecuteNonQuery();
+
+
+
+
+
     }
 
 
