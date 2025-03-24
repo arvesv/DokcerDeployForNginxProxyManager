@@ -1,22 +1,21 @@
 ﻿
-using System.CommandLine;
-using System.CommandLine.Invocation;
+using Spectre.Console.Cli;
 
-var rootCommand = new RootCommand
+var app = new CommandApp<NginxProxyCommand>();
+return app.Run(args);
+
+public class NginxProxyCommand : Command<NginxProxyCommand.Settings>
 {
-    new Option<string>(
-        "--name",
-        description: "Your name")
-};
+    public override int Execute(CommandContext context, Settings settings)
+    {
+        Console.WriteLine($"Nginx Proxy Command Executed  {settings.Args}  {settings.Args.Length} args");
+        // Your command logic here
+        return 0;
+    }
 
-rootCommand.Description = "Sample app for parsing command line arguments";
-
-rootCommand.Handler = CommandHandler.Create<string>((name) =>
-{
-    Console.WriteLine($"Hello, {name}!");
-});
-
-await rootCommand.InvokeAsync(args);
-
-// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+    public class Settings : CommandSettings
+    {
+        [CommandArgument(0, "[args]")]
+        public string[] Args { get; set; } = Array.Empty<string>();
+    }
+}
