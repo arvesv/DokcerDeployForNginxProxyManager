@@ -20,7 +20,20 @@ public class NginxProxyManagerApi : INginxProxyManagerApi
 
     private async void GetBearerToken()
     {
-        var response = await _httpClient.PostAsync($"{_baseUrl}/api/tokens", "{}");
+        var identity = "arve.svendsen@gmail.com";
+        var secret = "GramSvendsen1";
+        var requestBody = new
+        {
+            identity,
+            secret
+        };
+
+        var jsonContent = new StringContent(
+            System.Text.Json.JsonSerializer.Serialize(requestBody),
+            System.Text.Encoding.UTF8,
+            "application/json"
+        );
+        var response = await _httpClient.PostAsync($"{_baseUrl}/api/tokens", jsonContent);
         if (!response.IsSuccessStatusCode)
         {
             throw new Exception($"Failed to fetch token: {response.ReasonPhrase}");
@@ -28,13 +41,17 @@ public class NginxProxyManagerApi : INginxProxyManagerApi
 
         var content = await response.Content.ReadAsStringAsync();
 
-        return token;
+
     }
 
 
 
     public async Task<bool> DoesServiceExist(string serviceName)
     {
+
+        // First, get the bearer token
+        GetBearerToken();
+
         var response = await _httpClient.GetAsync($"{_baseUrl}/api/services");
         if (!response.IsSuccessStatusCode)
         {
